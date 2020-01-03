@@ -88,8 +88,8 @@ void KBprojectorSparse::setNLindex(
     const short iloc, const int size_nl, const std::vector<int>& pvec)
 {
     assert(size_nl > 0);
-    assert((int)nlindex_.size() > iloc);
-    assert((int)size_nl_.size() > iloc);
+    assert(static_cast<int>(nlindex_.size()) > iloc);
+    assert(static_cast<int>(size_nl_.size()) > iloc);
     assert(work_nlindex_.size()
            == static_cast<unsigned int>(omp_get_max_threads()));
 
