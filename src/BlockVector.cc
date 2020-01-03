@@ -15,6 +15,7 @@
 #include "global.h"
 #include "memory_space.h"
 
+// The NEWSTORAGE does not support GPU
 #define NEWSTORAGE 0
 
 template <typename ScalarType, typename MemorySpaceType>
@@ -164,7 +165,8 @@ void BlockVector<ScalarType, MemorySpaceType>::allocate_storage()
     storage_ = class_storage_[my_allocation_];
     assert(storage_ != nullptr);
 #else
-    storage_ = new ScalarType[size_storage_];
+    storage_ = MemorySpace::Memory<MemorySpaceType>::allocate<ScalarType>(
+        size_storage_);
 #endif
 
     assert(storage_ != nullptr);
@@ -182,9 +184,8 @@ void BlockVector<ScalarType, MemorySpaceType>::deallocate_storage()
         assert(my_allocation_ >= 0);
         allocated_[my_allocation_] = 0;
         my_allocation_             = -1;
-        storage_                   = nullptr;
 #else
-        delete[] storage_;
+        MemorySpace::Memory<MemorySpaceType>::free(storage_);
 #endif
         storage_ = nullptr;
     }
@@ -220,7 +221,8 @@ BlockVector<ScalarType, MemorySpaceType>::BlockVector(
     setup(bv);
 
     if (copy_data)
-        memcpy(storage_, bv.storage_, size_storage_ * sizeof(ScalarType));
+        MemorySpace::Memory<MemorySpaceType>::copy(
+            bv.storage_, size_storage_, storage_);
 }
 template <typename ScalarType, typename MemorySpaceType>
 BlockVector<ScalarType, MemorySpaceType>&
@@ -233,7 +235,8 @@ BlockVector<ScalarType, MemorySpaceType>::operator=(
 
     setup(bv);
 
-    memcpy(storage_, bv.storage_, size_storage_ * sizeof(ScalarType));
+    MemorySpace::Memory<MemorySpaceType>::copy(
+        bv.storage_, size_storage_, storage_);
 
     return *this;
 }
@@ -295,7 +298,7 @@ void BlockVector<ScalarType, MemorySpaceType>::initialize(
     size_storage_instance_ = size_storage_;
 
     allocate_storage();
-    memset(storage_, 0, size_storage_ * sizeof(ScalarType));
+    MemorySpace::Memory<MemorySpaceType>::set(storage_, size_storage_, 0);
 
     vect_.resize(nbvect);
     for (int i = 0; i < nbvect; i++)
@@ -337,14 +340,14 @@ void BlockVector<ScalarType, MemorySpaceType>::scal(
     assert(i < static_cast<int>(vect_.size()));
     assert(vect_[i] != nullptr);
 
-    MPscal(ld_, alpha, vect_[i]);
+    LinearAlgebraUtils<MemorySpaceType>::MPscal(ld_, alpha, vect_[i]);
 }
 template <typename ScalarType, typename MemorySpaceType>
 void BlockVector<ScalarType, MemorySpaceType>::scal(const double alpha)
 {
     assert(storage_ != nullptr);
 
-    MPscal(size_storage_, alpha, storage_);
+    LinearAlgebraUtils<MemorySpaceType>::MPscal(size_storage_, alpha, storage_);
 }
 template <typename ScalarType, typename MemorySpaceType>
 void BlockVector<ScalarType, MemorySpaceType>::scal(
@@ -354,7 +357,8 @@ void BlockVector<ScalarType, MemorySpaceType>::scal(
     assert(vect_[i] != nullptr);
 
     const int shift = iloc * locnumel_;
-    MPscal(locnumel_, alpha, vect_[i] + shift);
+    LinearAlgebraUtils<MemorySpaceType>::MPscal(
+        locnumel_, alpha, vect_[i] + shift);
 }
 template <typename ScalarType, typename MemorySpaceType>
 void BlockVector<ScalarType, MemorySpaceType>::axpy(

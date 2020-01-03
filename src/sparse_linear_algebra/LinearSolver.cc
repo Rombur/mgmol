@@ -494,7 +494,7 @@ int LinearSolver::fgmres_mp(LinearSolverMatrix<lsdatatype>& LSMat,
     {
         /*-------------------- compute initial residual vector */
         LSMat.matvec(sol, vv);
-        MPscal(n, coeff, vv);
+        LinearAlgebraUtils<MemorySpace::Host>::MPscal(n, coeff, vv);
 
         vv[lrindex] = 1.0 * scal + vv[lrindex];
         beta        = MPnrm2(n, vv);
@@ -505,7 +505,7 @@ int LinearSolver::fgmres_mp(LinearSolverMatrix<lsdatatype>& LSMat,
         if (beta == 0.0) break;
         t = 1.0 / beta;
         /*--------------------   normalize:  vv    =  vv   / beta */
-        MPscal(n, t, vv);
+        LinearAlgebraUtils<MemorySpace::Host>::MPscal(n, t, vv);
         if (its == 0) eps1 = tol * beta;
         /*--------------------initialize 1-st term  of rhs of hessenberg mtx */
         rs[0] = (float)beta;
@@ -558,7 +558,7 @@ int LinearSolver::fgmres_mp(LinearSolverMatrix<lsdatatype>& LSMat,
             if (t == 0.0) return (1);
             t = 1.0 / t;
             /*-------------------- v_{j+1} = w / h_{j+1,j}  */
-            MPscal(n, t, &vv[pti1]);
+            LinearAlgebraUtils<MemorySpace::Host>::MPscal(n, t, &vv[pti1]);
             /*-------------------- done with modified gram schimdt/arnoldi step
             | now  update factorization of hh.
             | perform previous transformations  on i-th column of h

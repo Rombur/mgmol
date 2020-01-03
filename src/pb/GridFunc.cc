@@ -733,7 +733,9 @@ GridFunc<T>& GridFunc<T>::operator+=(const GridFunc<T>& func)
 template <typename T>
 GridFunc<T>& GridFunc<T>::operator*=(const double alpha)
 {
-    if (grid_.active()) MPscal(grid_.sizeg(), alpha, uu_);
+    if (grid_.active())
+        LinearAlgebraUtils<MemorySpace::Host>::MPscal(
+            grid_.sizeg(), alpha, uu_);
 
     return *this;
 }
@@ -743,7 +745,7 @@ void GridFunc<T>::scal(const double alpha)
 {
     if (!grid_.active()) return;
 
-    MPscal(grid_.sizeg(), alpha, uu_);
+    LinearAlgebraUtils<MemorySpace::Host>::MPscal(grid_.sizeg(), alpha, uu_);
 }
 
 template <typename T>

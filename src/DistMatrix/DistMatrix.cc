@@ -287,7 +287,8 @@ void DistMatrix<T>::scal(const double alpha)
         clear();
         return;
     }
-    if (active_) MPscal(size_, alpha, &val_[0]);
+    if (active_)
+        LinearAlgebraUtils<MemorySpace::Host>::MPscal(size_, alpha, &val_[0]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2571,7 +2572,7 @@ template <class T>
 void DistMatrix<T>::scalColumn(const int icol, const double alpha)
 {
     const int ni = mloc_ * icol;
-    MPscal(mloc_, alpha, &val_[ni]);
+    LinearAlgebraUtils<MemorySpace::Host>::MPscal(mloc_, alpha, &val_[ni]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

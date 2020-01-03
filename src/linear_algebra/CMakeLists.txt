@@ -1,7 +1,8 @@
 
-set(SOURCES mputils.cc  serial_functions.cc)
+set(SOURCES linear_algebra_utils.cc mputils.cc  serial_functions.cc)
 add_library(mgmol_linear_algebra STATIC ${SOURCES})
 target_link_libraries(mgmol_linear_algebra PUBLIC MPI::MPI_CXX)
+target_link_libraries(mgmol_linear_algebra PUBLIC OpenMP::OpenMP_CXX)
 if(${MGMOL_WITH_MAGMA})
   target_link_libraries(mgmol_linear_algebra PRIVATE PkgConfig::MAGMA)
 endif()

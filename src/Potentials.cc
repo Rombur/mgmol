@@ -102,7 +102,7 @@ void Potentials::initWithVnuc()
     double one = 1.;
     MPaxpy(size_, one, &v_ext_[0], &vtot_[0]);
     // factor 2 to get total potential in [Ry] for calculations
-    MPscal(size_, ha2ry, &vtot_[0]);
+    LinearAlgebraUtils<MemorySpace::Host>::MPscal(size_, ha2ry, &vtot_[0]);
 }
 
 double Potentials::max() const
@@ -824,7 +824,7 @@ void Potentials::rescaleRhoComp()
     {
         const int numpt = mygrid.size();
         double t        = ionic_charge_ / comp_rho;
-        MPscal(numpt, t, &rho_comp_[0]);
+        LinearAlgebraUtils<MemorySpace::Host>::MPscal(numpt, t, &rho_comp_[0]);
 
         // Check new compensating charges
         comp_rho = getCharge(&rho_comp_[0]);
