@@ -281,7 +281,7 @@ if(${MAGMA_FOUND})
     ${SCALAPACK_LIBRARIES} Boost::unit_test_framework MPI::MPI_CXX
     OpenMP::OpenMP_CXX PkgConfig::MAGMA)
   target_link_libraries(testAndersonMix PRIVATE ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES} 
-    ${Boost_LIBRARIES} MPI::MPI_CXX PkgConfig::MAGMA)
+    Boost::unit_test_framework MPI::MPI_CXX PkgConfig::MAGMA)
 else()
   target_link_libraries(testDistVector PRIVATE ${SCALAPACK_LIBRARIES}
     ${BLAS_LIBRARIES} Boost::unit_test_framework MPI::MPI_CXX)
@@ -299,7 +299,7 @@ else()
     ${SCALAPACK_LIBRARIES} Boost::unit_test_framework MPI::MPI_CXX
     OpenMP::OpenMP_CXX)
   target_link_libraries(testAndersonMix PRIVATE ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES} 
-    ${Boost_LIBRARIES} MPI::MPI_CXX)
+    Boost::unit_test_framework MPI::MPI_CXX)
 endif()
 
 set_tests_properties(testSiH4 PROPERTIES REQUIRED_FILES
